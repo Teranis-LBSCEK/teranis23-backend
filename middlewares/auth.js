@@ -1,8 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const User = require('../models/User');
-
-const users = [ "user", "admin", "superadmin" ];
+const Ambassador = require('../models/Ambassador')
 
 const authorize = (roles = []) => {
   if (typeof roles === "string") {
@@ -27,12 +25,12 @@ const authorize = (roles = []) => {
                       message: "Unauthorized request",
                     });
                 }
-                if(decoded.user.role === "superadmin") {
-                  req.user = { id: "superadmin" };
+                if(decoded.user.role === "admin") {
+                  req.user = { id: "admin" };
                   req.user.role = decoded.user.role
                   next();
                 } else {
-                  const user = await User.findById(decoded.user.id);
+                  const user = await Ambassador.findById(decoded.user.id);
                   if (!user) {
                       return res.status(401).json({
                         success: false,

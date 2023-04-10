@@ -5,9 +5,14 @@ const Event = mongoose.Schema({
         type: String,
         required: true,
     },
+    desc: {
+        type: String,
+    },
+    prize: {
+        type: String,
+    },
     fee: {
         type: Number,
-        required: true
     },
     eventType: {
         type: String,
@@ -29,7 +34,7 @@ const Event = mongoose.Schema({
         type: String,
         required: true,
     },
-    regsiteredStudents: [{
+    registeredStudents: [{
         name: {
             type: String,
             required: true,

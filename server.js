@@ -25,7 +25,7 @@ app.use(xss());
 app.use(mongoSanitize());
 app.use(morgan("tiny"));
 
-const whitelist = ["http://127.0.0.1:3000", "localhost", "http://localhost:3000", "https://pdf-vishnu.vercel.app"];
+const whitelist = ["http://127.0.0.1:3000", "localhost", "http://localhost:3000", "https://teranis.in"];
 
 const corsOptions = {
 	// eslint-disable-next-line consistent-return
@@ -47,7 +47,6 @@ app.use(cors(corsOptions));
 app.get('/', (req, res, ) => {
     res.send('API of Teranis 23 website is running successfully');
 });
-
 
 // Define Routes
 app.use('/api/v1', require('./routes/index'));

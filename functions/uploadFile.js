@@ -10,7 +10,7 @@ async function uploadFiles(files) {
     const locations = [];
     const promises = files.map(async (file) => {
       const params = {
-        Bucket: "laxmi-signs",
+        Bucket: "teranis",
         Key: `${file.originalname}`,
         Body: file.buffer,
       };
