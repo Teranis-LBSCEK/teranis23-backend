@@ -12,6 +12,7 @@ module.exports.createEvent = errorWrapper(async (req, res) => {
         desc: req.body.desc,
         prize: req.body.prize,
         eventType: req.body.eventType,
+        featured: req.body.featured,
         date: req.body.date,
         from: req.body.from,
         to: req.body.to,

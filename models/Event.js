@@ -18,6 +18,10 @@ const Event = mongoose.Schema({
         type: String,
         //enum: ['webinar', 'workshop', 'pre-event', ]
     },
+    featured: {
+        type: Boolean,
+        default: false,
+    },
     date: {
         type: String,
         required: true,
