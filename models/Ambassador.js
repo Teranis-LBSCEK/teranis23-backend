@@ -5,7 +5,7 @@ const Ambassador = mongoose.Schema({
         type: String,
         required: true,
     },
-    refferalCode: {
+    referralCode: {
         type: String,
         required: true,
     },

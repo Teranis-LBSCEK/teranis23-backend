@@ -2,6 +2,7 @@ const Event = require('../models/Event');
 
 const errorWrapper = require('../middlewares/errorWrapper');
 const uploadFiles = require('../functions/uploadFile');
+const { generateReferralCode } = require('../utils/functions');
 
 module.exports.createEvent = errorWrapper(async (req, res) => {
     
@@ -86,3 +87,32 @@ module.exports.registeredStudents = errorWrapper(async (req, res) => {
         data: event.registeredStudents
     })
 });
+
+module.exports.registerEvent = errorWrapper(async (req, res) => {
+    const event = await Event.findById(req.params.eventId);
+    if(!event) {
+        return res.status(400).json({
+            success: false,
+            message: "Event not found"
+        });
+    }
+
+    const entry = {
+        name: req.body.name,
+        contact: req.body.contact,
+        email: req.body.email,
+        paymentId: await generateReferralCode(),
+        college: req.body.college,
+        dept: req.body.dept,
+        semester: req.body.semester
+    }
+
+    event.registeredStudents.push(entry);
+    await event.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Registration successfull",
+        data: entry
+    })    
+})

@@ -29,7 +29,7 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
 
     const newCa = new Ambassador({
         name: req.body.name,
-        refferalCode: await generateReferralCode(),
+        referralCode: await generateReferralCode(),
         phone: phoneNumber.number,
         email: req.body.email,
         password,
