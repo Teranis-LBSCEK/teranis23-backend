@@ -77,3 +77,12 @@ module.exports.deleteEvent = errorWrapper(async (req, res) => {
         data: event.name
     })
 })
+
+module.exports.registeredStudents = errorWrapper(async (req, res) => {
+    const event = await Event.findById(req.params.eventId)
+    res.status(200).json({
+        success: true,
+        message: "students list fetched successfully",
+        data: event.registeredStudents
+    })
+});
