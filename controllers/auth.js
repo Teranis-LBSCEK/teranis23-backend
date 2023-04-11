@@ -1,82 +1,52 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+
 const errorWrapper = require('../middlewares/errorWrapper');
+const { sendEmail } = require('../functions/sendEmail');
 
-//const User = require('../models/User');
+const Ambassador = require('../models/Ambassador')
 
-const libphonenumberJs = require("libphonenumber-js");
-const twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-
-module.exports.signin = errorWrapper(async (req, res) => {
-  const phoneNumber = libphonenumberJs.parsePhoneNumberFromString(req.body.phone.toString(), 'IN');
-
-  if(!phoneNumber.isValid()) {
-    return res.status(400).json({ 
-        success: false,
-        message: 'Invalid phone numberr' 
-    });
-  }
-
-  const user  = await User.findOne({ phone: phoneNumber.number });
-
+module.exports.caSignin = errorWrapper(async (req, res) => {
+  const { email, password } = req.body;
+  const user  = await Ambassador.findOne({ email });
   if (!user) {
-      return res.status(400).json({success: false, message: "User not found with the phone number"});
+      return res.status(400).json({success: false, message: "User not found with the email id"});
   }
 
-  const otp = Math.floor(100000 + Math.random() * 900000); //6 digit integer otp
-
-  user.otp = otp;
-  user.otpExpires = Date.now() + 3600000; // 1 hour
-  await user.save();
-
-
-  twilio.messages.create({
-    from: process.env.TWILIO_NUMBER,
-    to: user.phone,
-    body: `Hi ${user.name},\n` +
-    `This is your OTP for Signapp:\n`+
-    otp
-
-  }).then(() => {
-      res.status(200).json({
-        success: true,
-        message: "OTP sent to your phone number",
-      }); 
-  })
-});
-
-module.exports.submitOtp = errorWrapper(async (req, res) => {
-
-  const user = await User.findOne({ otp: req.body.otp, otpExpires: { $gt: Date.now() } });
-  if (!user) {
-    return res.status(400).json({success: false, message: "OTP is invalid or has expired"});
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+      return res.status(401).json({ "status": "error", "message": "Incorrect password" });
   }
 
-  user.otp = undefined;
-  user.otpExpires = undefined;
-  await user.save();
+  const userObj = user.toJSON()
+  delete userObj.password;
 
   const payload = {
     user: {
-      id: user.id,
-      role: user.role
+      id: userObj._id,
+      role: "ca",
+      refferalCode: userObj.refferalCode
     }
   };
-  req.user = {...user};
+
+
   return jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '1 year' },
       async (err, token) => {
           if (err) throw err;
           res.status(200).json({
             success: true,
             message: "Login successfull",
-            token,
-            user
+            data: {
+              token,
+              userData: userObj,
+            }
           });
       }
   );
+  
 });
 
 module.exports.adminSignin = async (req, res) => {
@@ -113,3 +83,72 @@ module.exports.adminSignin = async (req, res) => {
       })
   }
 };
+
+module.exports.forgotPassword = errorWrapper(async (req, res) => {
+  const user  = await Ambassador.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(400).json({success: false, message: "CA not found with the email"});
+  }
+  var buf = await crypto.randomBytes(20)
+  var token = buf.toString('hex');
+
+  user.resetPasswordToken = token;
+  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  await user.save();
+
+  const message = '<p>You are receiving this because you (or someone else) have requested the reset of the password for your Campus ambassador account in Teranis 23.<br>'+
+        'Please click on the following link, or paste this into your browser to complete the process:<br>' +
+        '<a href="http://localhost:3000/password-reset/ca' + token + '">Click here</a></p>' +
+        'If you did not request this, please ignore this email and your password will remain unchanged.<br>'+
+        'Please note that the link is active only for 1 hour.';
+
+  await sendEmail([req.body.email], 'Teranis 23 - Request for password reset', '', message);
+  res.status(200).json({
+    success: true,
+    message: "A link to reset your password has been sent to your email",
+  });
+});
+
+module.exports.submitPassword = async (req, res) => {
+  const user = await Ambassador.findOne({ resetPasswordToken: req.body.token, resetPasswordExpires: { $gt: Date.now() } });
+  if (!user) {
+    return res.status(400).json({success: false, message: "Password reset token is invalid or has expired"});
+  }
+
+  const password = await bcrypt.hash(req.body.password, 10);
+
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+
+  const userObj = user.toJSON()
+  delete userObj.password;
+
+  req.user = userObj;
+
+  const payload = {
+    user: {
+      id: userObj._id,
+      role: "ca",
+      refferalCode: userObj.refferalCode
+    }
+};
+
+return jwt.sign(
+  payload,
+  process.env.JWT_SECRET,
+  { expiresIn: '1 year' },
+  async (err, token) => {
+      if (err) throw err;
+      res.status(200).json({
+        success: true,
+        message: "Password changed",
+        data: {
+          token,
+          userData: userObj,
+        }
+      });
+  }
+);
+}

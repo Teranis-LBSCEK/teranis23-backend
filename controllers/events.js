@@ -35,9 +35,45 @@ module.exports.getEvents = errorWrapper(async (req, res) => {
 })
 
 module.exports.editEvent = errorWrapper(async (req, res) => {
-    
+    const event = await Event.findById(req.params.eventId);
+    if(!event) {
+        return res.status(400).json({
+            success: false,
+            message: "Event not found"
+        });
+    }
+
+    event.name =  req.body.name;
+    event.desc = req.body.desc;
+    event.prize =  req.body.prize;
+    event.fee = req.body.fee;
+    event.eventType = req.body.eventType;
+    event.date = req.body.date;
+    event.from = req.body.from;
+    event.to = req.body.to;
+    event.bannerUrl =  req.files.length > 0 ? await uploadFiles(req.files) : event.bannerUrl
+
+    await event.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Event updated successfully",
+        data: event
+    })
 })
 
 module.exports.deleteEvent = errorWrapper(async (req, res) => {
-    
+    const event = await Event.findOneAndDelete({ _id: req.params.eventId});
+    if(!event) {
+        return res.status(400).json({
+            success: false,
+            message: "Event not found"
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Event deleted successfully",
+        data: event.name
+    })
 })
