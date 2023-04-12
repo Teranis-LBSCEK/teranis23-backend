@@ -60,6 +60,6 @@ module.exports.leaderboard = errorWrapper(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Campus ambassador profile fetehed successfully",
-        data: await Ambassador.find().select('-password').sort({score: 1})
+        data: await Ambassador.find().select('-password').sort({score: -1})
     })
 })
