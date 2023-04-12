@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const libphonenumberJs = require("libphonenumber-js");
 
 const Ambassador = require('../models/Ambassador')
@@ -41,11 +42,33 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
 
     await newCa.save();
 
-    res.status(200).json({
-        success: true,
-        message: "Campus ambassador signed successfully",
-        data: newCa
-    })
+    const userObj = newCa.toJSON()
+    delete userObj.password;
+
+    const payload = {
+        user: {
+        id: userObj._id,
+        role: "ca",
+        refferalCode: userObj.refferalCode
+        }
+    };
+
+
+    return jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        async (err, token) => {
+            if (err) throw err;
+            res.status(200).json({
+                success: true,
+                message: "Campus ambassador signed successfully",
+                data: {
+                    token,
+                    userData: userObj,
+                }
+            });
+        }
+    );
 });
 
 module.exports.profile = errorWrapper(async (req, res) => {
@@ -60,6 +83,6 @@ module.exports.leaderboard = errorWrapper(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Campus ambassador profile fetehed successfully",
-        data: await Ambassador.find().select('-password').sort({score: -1})
+        data: await Ambassador.find().select(['name', 'college', 'score']).sort({score: -1})
     })
 })
