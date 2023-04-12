@@ -33,7 +33,7 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
         phone: phoneNumber.number,
         email: req.body.email,
         password,
-        profileUrl: await uploadFiles(req.files),
+        profileUrl: req.files.length > 0 ? await uploadFiles(req.files) : undefined,
         college: req.body.college,
         dept: req.body.dept,
         semester: req.body.semester,
