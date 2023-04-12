@@ -32,7 +32,7 @@ module.exports.getEvents = errorWrapper(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Events fetched successfully",
-        data: await Event.find()
+        data: await Event.find().select('-registeredStudents')
     })
 })
 
@@ -81,7 +81,14 @@ module.exports.deleteEvent = errorWrapper(async (req, res) => {
 })
 
 module.exports.registeredStudents = errorWrapper(async (req, res) => {
-    const event = await Event.findById(req.params.eventId)
+    const event = await Event.findById(req.params.eventId);
+    if(!event) {
+        return res.status(400).json({
+            success: false,
+            message: "Event not found"
+        });
+    }
+    
     res.status(200).json({
         success: true,
         message: "students list fetched successfully",
