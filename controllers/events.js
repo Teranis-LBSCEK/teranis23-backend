@@ -51,6 +51,7 @@ module.exports.editEvent = errorWrapper(async (req, res) => {
     event.fee = req.body.fee;
     event.eventType = req.body.eventType;
     event.date = req.body.date;
+    event.featured = req.body.featured;
     event.from = req.body.from;
     event.to = req.body.to;
     event.bannerUrl =  req.files.length > 0 ? await uploadFiles(req.files) : event.bannerUrl
@@ -88,7 +89,7 @@ module.exports.registeredStudents = errorWrapper(async (req, res) => {
             message: "Event not found"
         });
     }
-    
+
     res.status(200).json({
         success: true,
         message: "students list fetched successfully",
