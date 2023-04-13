@@ -25,24 +25,27 @@ app.use(xss());
 app.use(mongoSanitize());
 app.use(morgan("tiny"));
 
-// const whitelist = ["http://127.0.0.1:3000", "localhost", "http://localhost:3000", "https://teranis.in", "https://www.teranis.in"];
+const whitelist = ["http://127.0.0.1:3000", "localhost", "http://localhost:3000", "https://teranis.in", "https://www.teranis.in"];
 
-// const corsOptions = {
-// 	// eslint-disable-next-line consistent-return
-// 	origin(origin, callback) {
-// 		if (!origin) { // for mobile app and postman client
-// 			return callback(null, true);
-// 		}
-// 		if (whitelist.indexOf(origin) !== -1) {
-// 			callback(null, true);
-// 		} else {
-// 			callback(new Error("Not allowed by CORS"));
-// 		}
-// 	},
-// 	credentials: true,
-// };
+const corsOptions = {
+	// eslint-disable-next-line consistent-return
+	origin(origin, callback) {
+		if (!origin) { // for mobile app and postman client
+			return callback(null, true);
+		}
+		if (whitelist.indexOf(origin) !== -1) {
+			callback(null, true);
+		} else {
+			callback(new Error("Not allowed by CORS"));
+		}
+	},
+	credentials: true,
+};
 
 // app.use(cors(corsOptions));
+app.use(cors({
+	origin: '*'
+}));
 
 app.get('/', (req, res, ) => {
     res.send('API of Teranis 23 website is running successfully');
