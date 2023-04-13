@@ -64,6 +64,10 @@ const Event = mongoose.Schema({
         },
         semester: {
             type: String
+        },
+        certificateDipersed: {
+            type: Boolean,
+            default: false,
         }
     }],
 })

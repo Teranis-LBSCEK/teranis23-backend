@@ -82,7 +82,7 @@ module.exports.profile = errorWrapper(async (req, res) => {
 module.exports.leaderboard = errorWrapper(async (req, res) => {
     res.status(200).json({
         success: true,
-        message: "Campus ambassador profile fetehed successfully",
+        message: "Campus ambassador profile fetched successfully",
         data: await Ambassador.find().select(['name', 'college', 'score', 'profileUrl']).sort({score: -1})
     })
 });
