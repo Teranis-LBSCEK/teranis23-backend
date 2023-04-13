@@ -96,13 +96,13 @@ module.exports.forgotPassword = errorWrapper(async (req, res) => {
   user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
   await user.save();
 
-  const message = '<p>You are receiving this because you (or someone else) have requested the reset of the password for your Campus ambassador account in Teranis 23.<br>'+
-        'Please click on the following link, or paste this into your browser to complete the process:<br>' +
+  const message = '<p>You are receiving this because you (or someone else) have requested the reset of the password for your Campus ambassador profile in Teranis 23.<br></p>'+
+        '<p>Please click on the following link, or paste this into your browser to complete the process:<br>' +
         '<a href="http://localhost:3000/password-reset/ca' + token + '">Click here</a></p>' +
         'If you did not request this, please ignore this email and your password will remain unchanged.<br>'+
         'Please note that the link is active only for 1 hour.';
 
-  await sendEmail([req.body.email], 'Teranis 23 - Request for password reset', '', message);
+  await sendEmail([req.body.email], '', 'Teranis 23 - Request for password reset', message);
   res.status(200).json({
     success: true,
     message: "A link to reset your password has been sent to your email",
