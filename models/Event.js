@@ -34,11 +34,25 @@ const Event = mongoose.Schema({
         type: String,
         required: true,
     },
+    contact: {
+        type: String,
+    },
+    lastDate: {
+        type: String,
+    },
+    venue: {
+        type: String,
+    },
+    status: {
+        type: String,
+        default: 'Opened',
+        enum: ['Opened', 'Closed']
+    },
     bannerUrl: {
         type: String,
         required: true,
     },
-    registeredStudents: [{
+    registrations: [{
         name: {
             type: String,
             required: true,
@@ -51,7 +65,7 @@ const Event = mongoose.Schema({
             type: String,
             required: true,
         },
-        paymentId: {
+        paymentUrl: {
             type: String,
             required: true,
         },
@@ -65,7 +79,11 @@ const Event = mongoose.Schema({
         semester: {
             type: String
         },
-        certificateDipersed: {
+        status: {
+            type: String,
+            default: 'Pending'
+        },
+        certificateDispersed: {
             type: Boolean,
             default: false,
         }

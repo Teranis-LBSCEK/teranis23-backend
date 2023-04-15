@@ -53,7 +53,6 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
         }
     };
 
-
     return jwt.sign(
         payload,
         process.env.JWT_SECRET,
