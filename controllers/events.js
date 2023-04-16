@@ -167,7 +167,7 @@ module.exports.registerEvent = errorWrapper(async (req, res) => {
         name: req.body.name,
         contact: req.body.contact,
         email: req.body.email,
-        paymentId: await generateReferralCode(),
+        paymentUrl: await uploadFiles(req.files),
         college: req.body.college,
         dept: req.body.dept,
         semester: req.body.semester
