@@ -8,6 +8,13 @@ const { generateReferralCode } = require('../utils/functions');
 
 module.exports.createEvent = errorWrapper(async (req, res) => {
 
+    if(req.files.length == 0) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Banner image is required' 
+        });
+    }
+
     const phoneNumber = libphonenumberJs.parsePhoneNumberFromString(req.body.contact.toString(), 'IN');
     if(!phoneNumber.isValid()) {
         return res.status(400).json({ 
@@ -155,6 +162,14 @@ module.exports.registeredStudents = errorWrapper(async (req, res) => {
 });
 
 module.exports.registerEvent = errorWrapper(async (req, res) => {
+
+    if(req.files.length == 0) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Payment screenshot is required' 
+        });
+    }
+
     const event = await Event.findById(req.params.eventId);
     if(!event) {
         return res.status(400).json({

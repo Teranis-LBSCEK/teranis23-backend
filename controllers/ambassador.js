@@ -4,6 +4,7 @@ const libphonenumberJs = require("libphonenumber-js");
 
 const Ambassador = require('../models/Ambassador')
 
+const { sendEmail } = require('../functions/sendEmail');
 const errorWrapper = require('../middlewares/errorWrapper');
 const uploadFiles = require('../functions/uploadFile');
 const { generateReferralCode } = require('../utils/functions');
@@ -53,7 +54,7 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
         }
     };
 
-    return jwt.sign(
+    jwt.sign(
         payload,
         process.env.JWT_SECRET,
         async (err, token) => {
@@ -68,6 +69,14 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
             });
         }
     );
+
+//     const message = `<p>Hi ${newCa.name},</p><br><p> Thank you for registering as a Campus ambassador profile in Teranis 23.<br></p>`+
+//         '<p><br>' + 
+//         '' +
+//         ''
+        
+
+//   await sendEmail([req.body.email], '', 'Teranis 23 - Request for password reset', message);
 });
 
 module.exports.profile = errorWrapper(async (req, res) => {
