@@ -1,6 +1,7 @@
 const libphonenumberJs = require("libphonenumber-js");
 
 const Event = require('../models/Event');
+const Ambassador = require('../models/Ambassador');
 
 const errorWrapper = require('../middlewares/errorWrapper');
 const uploadFiles = require('../functions/uploadFile');
@@ -176,6 +177,10 @@ module.exports.registerEvent = errorWrapper(async (req, res) => {
             success: false,
             message: "Event not found"
         });
+    }
+
+    if(req.body.referralCode) {
+       await Ambassador.updateOne({ referralCode: req.body.referralCode}, { $inc: {score: 5}});
     }
 
     const entry = {

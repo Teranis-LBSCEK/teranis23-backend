@@ -98,7 +98,7 @@ module.exports.forgotPassword = errorWrapper(async (req, res) => {
 
   const message = '<p>You are receiving this because you (or someone else) have requested the reset of the password for your Campus ambassador profile in Teranis 23.<br></p>'+
         '<p>Please click on the following link, or paste this into your browser to complete the process:<br>' +
-        '<a href="https://www.teranis.in/password-reset/ca' + token + '">Click here</a></p>' +
+        '<a href="http://localhost:3000/password-reset/ca' + token + '">Click here</a></p>' +
         'If you did not request this, please ignore this email and your password will remain unchanged.<br>'+
         'Please note that the link is active only for 1 hour.';
 
