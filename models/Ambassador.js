@@ -39,6 +39,12 @@ const Ambassador = mongoose.Schema({
     score: {
         type: Number,
         default: 0
+    },
+    resetPasswordToken: {
+        type: String,
+    },
+    resetPasswordExpires: {
+        type:Date
     }
 })
 
