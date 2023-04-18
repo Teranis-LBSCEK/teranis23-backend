@@ -102,3 +102,21 @@ module.exports.getAll = errorWrapper(async (req, res) => {
         data: await Ambassador.find().select('-password')
     })
 });
+
+module.exports.verifyReferralCode = errorWrapper(async (req, res) => {
+    if(
+        await Ambassador.findOne({ referralCode: req.body.referralCode})
+    ) {
+        res.status(200).json({
+            success: true,
+            message: "Verified",
+            data: req.body.referralCode
+        })
+    } else {
+        res.status(400).json({
+            success: false,
+            message: "Unverified",
+            data: null
+        })
+    }
+})
