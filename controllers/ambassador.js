@@ -119,4 +119,20 @@ module.exports.verifyReferralCode = errorWrapper(async (req, res) => {
             data: null
         })
     }
+});
+
+module.exports.deleteCa  = errorWrapper(async (req, res) => {
+    const ca = await Ambassador.findOneAndDelete({ _id: req.params.caId});
+    if(!ca) {
+        return res.status(400).json({
+            success: false,
+            message: "CA not found"
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "CA deleted successfully",
+        data: ca.name
+    })
 })
