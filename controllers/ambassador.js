@@ -70,13 +70,13 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
         }
     );
 
-//     const message = `<p>Hi ${newCa.name},</p><br><p> Thank you for registering as a Campus ambassador profile in Teranis 23.<br></p>`+
-//         '<p><br>' + 
-//         '' +
-//         ''
-        
+    const message = `<p> Dear ${newCa.name},</p>`+
+        `<p>We appreciate your interest in being Campus Ambassador for our Technical Fest Teranis’23 and believe that you will find it to be a valuable experience. 
+        If you have any questions or concerns, please do not hesitate to contact us.</p>`+
+        '<p>Thank you again for registering, and we look forward to seeing you soon!</p>' + 
+        '<p>Best regards,<br>Teranis’23<br> Dept of CSE & IT<br> LBSCEK</p>'
 
-//   await sendEmail([req.body.email], '', 'Teranis 23 - Request for password reset', message);
+    await sendEmail([req.body.email], '', 'Campus Ambassador registration for Teranis 23', message);
 });
 
 module.exports.profile = errorWrapper(async (req, res) => {
@@ -91,7 +91,7 @@ module.exports.leaderboard = errorWrapper(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Campus ambassador profile fetched successfully",
-        data: await Ambassador.find().select(['name', 'college', 'score', 'profileUrl']).sort({score: -1})
+        data: await Ambassador.find().select(['name', 'college', 'score', 'profileUrl']).sort({score: 1, name: -1})
     })
 });
 
