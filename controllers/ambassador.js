@@ -71,8 +71,9 @@ module.exports.caSignUp = errorWrapper(async (req, res) => {
     );
 
     const message = `<p> Dear ${newCa.name},</p>`+
-        `<p>We appreciate your interest in being Campus Ambassador for our Technical Fest Teranis’23 and believe that you will find it to be a valuable experience. 
-        If you have any questions or concerns, please do not hesitate to contact us.</p>`+
+        `<p>We appreciate your interest in being Campus Ambassador for our Technical Fest Teranis’23 and believe that you will find it to be a valuable experience.</p>`+ 
+        `<p>If you have any questions or concerns, please do not hesitate to contact us.</p>`+
+        `<p>Here is the link to our website with your referral code - https://www.teranis.in/referrer/${newCa.referralCode}</p>` +
         '<p>Thank you again for registering, and we look forward to seeing you soon!</p>' + 
         '<p>Best regards,<br>Teranis’23<br> Dept of CSE & IT<br> LBSCEK</p>'
 

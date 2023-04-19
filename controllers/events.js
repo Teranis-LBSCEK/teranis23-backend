@@ -3,9 +3,9 @@ const libphonenumberJs = require("libphonenumber-js");
 const Event = require('../models/Event');
 const Ambassador = require('../models/Ambassador');
 
+const { sendEmail } = require('../functions/sendEmail');
 const errorWrapper = require('../middlewares/errorWrapper');
 const uploadFiles = require('../functions/uploadFile');
-const { generateReferralCode } = require('../utils/functions');
 
 module.exports.createEvent = errorWrapper(async (req, res) => {
 
@@ -204,29 +204,43 @@ module.exports.registerEvent = errorWrapper(async (req, res) => {
 });
 
 module.exports.approveRegistration = errorWrapper(async (req, res) => {
-    const event = await Event.findOneAndUpdate(
-        { _id: req.body.eventId, 'registrations._id': req.body.regId },
-        { $set: { 'registrations.$.status': 'Approved' } }
-    )
 
-    console.log(event);
+    const event = await Event.findById(req.body.eventId);
+    if (!event) {
+        return res.status(400).json({
+            success: false,
+            message: "Event not found"
+        });
+    }
 
-    if(event.modifiedCount > 0) {
-        res.status(200).json({
-            success: true,
-            message: "Registration approved successfully",
-            data: null
-        })
+    let flag = 0;
+    let i ;
+    for (i = 0; i < event.registrations.length; i++) {
+        if(event.registrations[i].id == req.body.regId && event.registrations[i].status == 'Pending') {
 
-        // const message = `<p> Dear ${newCa.name},</p>`+
-        // `<p>We appreciate your interest in being Campus Ambassador for our Technical Fest Teranis’23 and believe that you will find it to be a valuable experience. 
-        // If you have any questions or concerns, please do not hesitate to contact us.</p>`+
-        // '<p>Thank you again for registering, and we look forward to seeing you soon!</p>' + 
-        // '<p>Best regards,<br>Teranis’23<br> Dept of CSE & IT<br> LBSCEK</p>'
+            event.registrations[i].status = 'Approved';
+            await event.save();
 
-        // await sendEmail([req.body.email], '', 'Campus Ambassador registration for Teranis 23', message);
-    } else {
-        res.status(400).json({
+            res.status(200).json({
+                success: true,
+                message: "Registration approved succesfully",
+            }) 
+
+            const message = `<p> Dear ${event.registrations[i].name},</p>`+
+                `<p>We appreciate your interest of participating in <b>${event.name}</b> in our Technical Fest Teranis’23 and believe that you will find it to be a valuable experience.</p>`+
+                `<p>If you have any questions or concerns, please do not hesitate to contact us.</p>`+
+                '<p>Thank you again for registering, and we look forward to seeing you soon!</p>' + 
+                '<p>Best regards,<br>Teranis’23<br> Dept of CSE & IT<br> LBSCEK</p>'
+
+            await sendEmail([event.registrations[i].email], '', 'Congratulations! Your registration for an Event in Teranis 23 has approved.', message);
+            flag ++;
+            break;
+        }
+        
+    }
+
+    if (flag == 0) {
+        return res.status(400).json({
             success: false,
             message: "Entry not found or already approved, registration not updated"
         });
