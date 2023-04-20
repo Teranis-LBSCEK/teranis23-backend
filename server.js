@@ -42,10 +42,7 @@ const corsOptions = {
 	credentials: true,
 };
 
-// app.use(cors(corsOptions));
-app.use(cors({
-	origin: '*'
-}));
+app.use(cors(corsOptions));
 
 app.get('/', (req, res, ) => {
     res.send('API of Teranis 23 website is running successfully');
