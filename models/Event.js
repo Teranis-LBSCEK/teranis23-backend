@@ -79,6 +79,9 @@ const Event = mongoose.Schema({
         semester: {
             type: String
         },
+        referralCode: {
+            type: String
+        },
         status: {
             type: String,
             default: 'Pending'

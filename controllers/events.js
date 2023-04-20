@@ -179,10 +179,6 @@ module.exports.registerEvent = errorWrapper(async (req, res) => {
         });
     }
 
-    if(req.body.referralCode) {
-       await Ambassador.updateOne({ referralCode: req.body.referralCode}, { $inc: {score: 5}});
-    }
-
     const entry = {
         name: req.body.name,
         contact: req.body.contact,
@@ -190,7 +186,8 @@ module.exports.registerEvent = errorWrapper(async (req, res) => {
         paymentUrl: await uploadFiles(req.files),
         college: req.body.college,
         dept: req.body.dept,
-        semester: req.body.semester
+        semester: req.body.semester,
+        referralCode: req.body.referralCode
     }
 
     event.registrations.push(entry);
@@ -220,6 +217,10 @@ module.exports.approveRegistration = errorWrapper(async (req, res) => {
 
             event.registrations[i].status = 'Approved';
             await event.save();
+
+            if(event.registrations[i].referralCode) {
+                await Ambassador.updateOne({ referralCode: event.registrations[i].referralCode}, { $inc: {score: 5}});
+             }
 
             res.status(200).json({
                 success: true,
