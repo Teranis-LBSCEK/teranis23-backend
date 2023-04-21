@@ -37,6 +37,7 @@ module.exports.createEvent = errorWrapper(async (req, res) => {
         contact: phoneNumber.number,
         lastDate: req.body.lastDate,
         venue: req.body.venue,
+        whatsappLink: req.body.whatsappLink,
         bannerUrl: await uploadFiles(req.files)
     });
 
@@ -83,9 +84,10 @@ module.exports.editEvent = errorWrapper(async (req, res) => {
     event.featured = req.body.featured;
     event.from = req.body.from;
     event.to = req.body.to;
-    event.contact =  phoneNumber.number,
-    event.lastDate =  req.body.lastDate,
-    event.venue =  req.body.venue,
+    event.contact =  phoneNumber.number;
+    event.lastDate =  req.body.lastDate;
+    event.venue =  req.body.venue;
+    event.whatsappLink =  req.body.whatsappLink;
     event.bannerUrl =  req.files.length > 0 ? await uploadFiles(req.files) : event.bannerUrl
 
     await event.save();
@@ -229,6 +231,7 @@ module.exports.approveRegistration = errorWrapper(async (req, res) => {
 
             const message = `<p> Dear ${event.registrations[i].name},</p>`+
                 `<p>We appreciate your interest of participating in <b>${event.name}</b> in our Technical Fest Teranis’23 and believe that you will find it to be a valuable experience.</p>`+
+                `${event.whatsappLink? `<p>Join the whatsapp group by this link ${event.whatsappLink}</p>`: ''}` +
                 `<p>If you have any questions or concerns, please do not hesitate to contact us.</p>`+
                 '<p>Thank you again for registering, and we look forward to seeing you soon!</p>' + 
                 '<p>Best regards,<br>Teranis’23<br> Dept of CSE & IT<br> LBSCEK</p>'

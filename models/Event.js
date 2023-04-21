@@ -48,6 +48,9 @@ const Event = mongoose.Schema({
         default: 'Opened',
         enum: ['Opened', 'Closed']
     },
+    whatsappLink: {
+        type: String
+    },
     bannerUrl: {
         type: String,
         required: true,
