@@ -5,6 +5,11 @@ const Event = mongoose.Schema({
         type: String,
         required: true,
     },
+    uniqueName: {
+        type: String,
+        unique: true,
+        required: true,
+    },
     desc: {
         type: String,
     },

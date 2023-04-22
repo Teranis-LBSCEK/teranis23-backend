@@ -26,6 +26,7 @@ module.exports.createEvent = errorWrapper(async (req, res) => {
     
     const newEvent = new Event({
         name: req.body.name,
+        uniqueName: req.body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         fee: req.body.fee,
         desc: req.body.desc,
         prize: req.body.prize,
@@ -58,6 +59,14 @@ module.exports.getEvents = errorWrapper(async (req, res) => {
     })
 })
 
+module.exports.getEventByName = errorWrapper(async (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Events fetched successfully",
+        data: await Event.findOne({ uniqueName: req.params.uniqueName}).select('-registrations')
+    })
+});
+
 module.exports.editEvent = errorWrapper(async (req, res) => {
     const phoneNumber = libphonenumberJs.parsePhoneNumberFromString(req.body.contact.toString(), 'IN');
     if(!phoneNumber.isValid()) {
@@ -76,6 +85,7 @@ module.exports.editEvent = errorWrapper(async (req, res) => {
     }
 
     event.name =  req.body.name;
+    uniqueName =  req.body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     event.desc = req.body.desc;
     event.prize =  req.body.prize;
     event.fee = req.body.fee;
