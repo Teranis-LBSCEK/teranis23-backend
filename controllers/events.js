@@ -85,7 +85,7 @@ module.exports.editEvent = errorWrapper(async (req, res) => {
     }
 
     event.name =  req.body.name;
-    uniqueName =  req.body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    uniqueName =  req.body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     event.desc = req.body.desc;
     event.prize =  req.body.prize;
     event.fee = req.body.fee;
